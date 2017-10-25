@@ -1,44 +1,37 @@
 <template>
-<div id="app">
-	<div class="container">
-		<h2>Geek Articles</h2>
-		<div class="app__search">
-			<input type="text" v-on:input="searchArticle">
+	<div class="app" id="app">
+		<header-component v-bind:name="currentRoute"></header-component>
+
+		<div class="content">
+			<transition name="fade">
+				<router-view></router-view>
+			</transition>
 		</div>
-		<div class="app__top">
-			<article-component v-for="item in articles" v-bind:item="item" v-bind:key="item.id"></article-component>
-		</div>
+
+		<footer-component></footer-component>
 	</div>
-</div>
 </template>
 
 <script>
-import Articles from './assets/articles';
-import ArticleComponent from './components/ArticleComponent.vue';
+import HeaderComponent from './HeaderComponent.vue';
+import FooterComponent from './FooterComponent.vue';
 
 export default {
-	name: 'app',
-	components: {
-		'article-component': ArticleComponent
-	},
-	data () {
+	name: 'index',
+	data() {
 		return {
-			articles: []
-		}
+			currentRoute: ''
+		};
 	},
-	methods: {
-		searchArticle(ev) {
-			let query = ev.target.value;
-			let newArray = this.articles.filter((item) => {
-				return item.header.toLowerCase().match(query);
-			});
-			
-			this.articles = ! query.trim() ? Articles.items : newArray;
-		}
+	components: {
+		'headerComponent': HeaderComponent,
+		'footerComponent': FooterComponent
 	},
 	
-	created() {
-		this.articles = Articles.items.slice();
+	watch: {
+		'$route'(to, from) {
+			this.currentRoute = `${to.name} -> ${to.params.id}`;
+		}
 	}
 }
 </script>
@@ -48,14 +41,41 @@ export default {
 	box-sizing: border-box;
 }
 
+html,
 body {
-	font-family: 'Raleway', sans-serif;
-	background: #fff;
+	height: 100%;
 }
 
-.container {
+body {
+	margin: 0;
+	padding: 0;
+	min-width: 900px;
+}
+
+.app {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.content {
+	flex: 1;
+}
+
+header {
+	height: 100px;
+	background: #fed12f;
+}
+
+footer {
+	height: 100px;
+	background: #ffddee;
+}
+
+.articles {
 	width: 500px;
 	margin: 0 auto;
+	margin-top: 20px;
 }
 
 .app__search {
@@ -124,4 +144,15 @@ h2 {
 img {
 	max-width: 100%;
 }
+
+.fade-enter-active,
+.fade-leave-active {
+	transition: opacity .5s;
+}
+
+.fade-enter, .fade-leave-to /* .fade-leave-active до версии 2.1.8 */ {
+	opacity: 0;
+}
 </style>
+
+

@@ -1,8 +1,9 @@
-var path = require('path')
-var webpack = require('webpack')
+const path = require('path');
+const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
-  entry: './src/main.js',
+  entry: './src/articlesRouter/main.js',
   output: {
     path: path.resolve(__dirname, './dist'),
     publicPath: '/dist/',
@@ -30,12 +31,19 @@ module.exports = {
         options: {
           name: '[name].[ext]?[hash]'
         }
-      }, {
+      }, 
+      {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader']
+        use: ExtractTextPlugin.extract({
+          fallback: "style-loader",
+          use: "css-loader"
+        })
       }
     ]
   },
+  plugins: [
+    new ExtractTextPlugin('styles.css'),
+  ],
   resolve: {
     alias: {
       'vue$': 'vue/dist/vue.esm.js'
